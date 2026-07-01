@@ -1,17 +1,16 @@
 """
-Central configuration manager.
+Configuration manager.
 """
 
-from mycode.core.config.env import env
-from mycode.core.config.loader import load_settings
+from mycode.core.config.env import Environment
+from mycode.core.config.loader import ConfigLoader
+from mycode.core.config.models import Settings
 
 
 class ConfigManager:
-    """Provides access to all application configuration."""
+    """Application configuration."""
 
     def __init__(self) -> None:
-        self.settings = load_settings()
-        self.environment = env
+        self.environment = Environment()
 
-
-config = ConfigManager()
+        self.settings: Settings = ConfigLoader().load()

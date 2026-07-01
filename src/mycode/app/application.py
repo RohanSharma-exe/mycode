@@ -1,10 +1,12 @@
 """
 Application root.
 
-Owns all managers and services used by the framework.
+Owns all framework services.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 from mycode.app.container import Container
 
@@ -13,13 +15,12 @@ class Application:
     """Main application instance."""
 
     def __init__(self) -> None:
-        # Dependency injection container.
         self.container = Container()
 
-    def register(self, name: str, service: object) -> None:
+    def register(self, service_type: type[Any], instance: Any) -> None:
         """Register a shared service."""
-        self.container.register(name, service)
+        self.container.register(service_type, instance)
 
-    def get(self, name: str) -> object:
-        """Retrieve a shared service."""
-        return self.container.resolve(name)
+    def resolve(self, service_type: type[Any]) -> Any:
+        """Resolve a shared service."""
+        return self.container.resolve(service_type)

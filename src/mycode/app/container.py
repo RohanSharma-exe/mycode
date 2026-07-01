@@ -1,5 +1,7 @@
 """
-Simple dependency injection container.
+Dependency Injection Container.
+
+Stores and resolves shared singleton services.
 """
 
 from __future__ import annotations
@@ -8,22 +10,47 @@ from typing import Any
 
 
 class Container:
-    """Stores shared singleton services."""
+    """Simple type-based dependency injection container."""
 
     def __init__(self) -> None:
-        self._services: dict[str, Any] = {}
+        self._services: dict[type[Any], Any] = {}
 
-    def register(self, name: str, service: Any) -> None:
-        """Register a singleton service."""
-        self._services[name] = service
+    def register(self, service_type: type[Any], instance: Any) -> None:
+        """
+        Register a singleton instance.
 
-    def resolve(self, name: str) -> Any:
-        """Resolve a registered service."""
-        try:
-            return self._services[name]
-        except KeyError as exc:
-            raise KeyError(f"Service '{name}' is not registered.") from exc
+        Parameters
+        ----------
+        service_type:
+            Type used as the lookup key.
 
-    def exists(self, name: str) -> bool:
-        """Check whether a service exists."""
-        return name in self._services
+        instance:
+            Singleton instance.
+        """
+        self._services[service_type] = instance
+
+    def resolve(self, service_type: type[Any]) -> Any:
+        """
+        Resolve a registered service.
+
+        Raises
+        ------
+        KeyError
+            If the service has not been registered.
+        """
+        if service_type not in self._services:
+            raise KeyError(f"Service '{service_type.__name__}' has not been registered.")
+
+        return self._services[service_type]
+
+    def exists(self, service_type: type[Any]) -> bool:
+        """Return True if the service exists."""
+        return service_type in self._services
+
+    def remove(self, service_type: type[Any]) -> None:
+        """Remove a registered service."""
+        self._services.pop(service_type, None)
+
+    def clear(self) -> None:
+        """Remove all registered services."""
+        self._services.clear()

@@ -2,6 +2,6 @@
 Configuration package.
 """
 
-from mycode.core.config.manager import config
+from mycode.core.config.manager import ConfigManager
 
-__all__ = ["config"]
+__all__ = ["ConfigManager"]

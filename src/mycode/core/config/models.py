@@ -1,15 +1,12 @@
 """
 Configuration models.
-
-This module contains all Pydantic models used by the
-configuration system.
 """
 
 from pydantic import BaseModel
 
 
 class AppConfig(BaseModel):
-    """Application configuration."""
+    """Application settings."""
 
     name: str
     version: str
@@ -17,14 +14,14 @@ class AppConfig(BaseModel):
 
 
 class LoggingConfig(BaseModel):
-    """Logging configuration."""
+    """Logging settings."""
 
     level: str
     file: str
 
 
 class LLMConfig(BaseModel):
-    """Default LLM configuration."""
+    """Default LLM settings."""
 
     default_provider: str
     default_model: str
@@ -32,14 +29,14 @@ class LLMConfig(BaseModel):
 
 
 class SecurityConfig(BaseModel):
-    """Security configuration."""
+    """Security settings."""
 
     workspace_only: bool
     confirm_dangerous_commands: bool
 
 
 class Settings(BaseModel):
-    """Complete application settings."""
+    """Root application settings."""
 
     app: AppConfig
     logging: LoggingConfig

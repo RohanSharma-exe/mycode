@@ -1,5 +1,5 @@
 """
-Loads YAML configuration files.
+Configuration loader.
 """
 
 from pathlib import Path
@@ -8,13 +8,16 @@ import yaml
 
 from mycode.core.config.models import Settings
 
-CONFIG_FILE = Path("configs/settings.yaml")
+SETTINGS_FILE = Path("configs/settings.yaml")
 
 
-def load_settings() -> Settings:
-    """Load and validate the application settings."""
+class ConfigLoader:
+    """Loads framework configuration."""
 
-    with CONFIG_FILE.open("r", encoding="utf-8") as file:
-        data = yaml.safe_load(file)
+    def load(self) -> Settings:
+        """Load settings.yaml."""
 
-    return Settings.model_validate(data)
+        with SETTINGS_FILE.open("r", encoding="utf-8") as file:
+            data = yaml.safe_load(file)
+
+        return Settings.model_validate(data)
