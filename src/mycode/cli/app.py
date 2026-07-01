@@ -4,8 +4,7 @@ Command-line interface.
 
 import typer
 
-from mycode.app.bootstrap import bootstrap
-from mycode.core.config.manager import ConfigManager
+from mycode.llm import ChatMessage, ChatRequest, MessageRole
 
 cli = typer.Typer(
     help="Production-grade AI Agent Framework.",
@@ -20,12 +19,13 @@ class ExampleService:
 def main() -> None:
     """Start MyCode."""
 
-    application = bootstrap()
+    request = ChatRequest(
+        messages=[
+            ChatMessage(
+                role=MessageRole.USER,
+                content="Hello MyCode!",
+            )
+        ]
+    )
 
-    config = application.resolve(ConfigManager)
-
-    typer.echo("🚀 MyCode Started")
-    typer.echo(f"App: {config.settings.app.name}")
-    typer.echo(f"Version: {config.settings.app.version}")
-    typer.echo(f"Provider: {config.settings.llm.default_provider}")
-    typer.echo(f"Ollama: {config.environment.OLLAMA_BASE_URL}")
+    typer.echo(request.model_dump_json(indent=4))
