@@ -65,7 +65,7 @@ SecurityManager
 
 # Runtime
 
-AIRuntime
+RuntimeEngine
 
 Conversation
 
@@ -171,7 +171,7 @@ The following classes are considered stable.
 
 Application
 
-AIRuntime
+RuntimeEngine
 
 Conversation
 

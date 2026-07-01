@@ -113,7 +113,7 @@ Prefer explicit imports.
 Good:
 
 ```python
-from mycode.llm.runtime import AIRuntime
+from mycode.llm.runtime import RuntimeEngine
 ```
 
 Avoid wildcard imports:

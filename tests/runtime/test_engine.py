@@ -1,5 +1,5 @@
 from mycode.runtime.conversation import Conversation
-from mycode.runtime.engine import AIRuntime
+from mycode.runtime.engine import RuntimeEngine
 
 
 class DummyRouter:
@@ -10,6 +10,6 @@ class DummyRouter:
 
 
 def test_runtime_creation() -> None:
-    runtime = AIRuntime(DummyRouter())
+    runtime = RuntimeEngine(DummyRouter())
 
     assert isinstance(runtime.conversation, Conversation)

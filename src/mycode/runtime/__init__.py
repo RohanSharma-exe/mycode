@@ -4,7 +4,7 @@ LLM package.
 
 from mycode.runtime.capabilities import ProviderCapabilities
 from mycode.runtime.conversation import Conversation
-from mycode.runtime.engine import AIRuntime
+from mycode.runtime.engine import RuntimeEngine
 from mycode.runtime.factory import ProviderFactory
 from mycode.runtime.models import (
     ChatMessage,
@@ -35,5 +35,5 @@ __all__ = [
     "ProviderFactory",
     "ProviderRegistry",
     "ProviderRouter",
-    "AIRuntime",
+    "RuntimeEngine",
 ]

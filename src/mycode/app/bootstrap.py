@@ -6,7 +6,7 @@ from mycode.app.application import Application
 from mycode.core.config import ConfigManager
 from mycode.core.events import EventBus
 from mycode.core.logging import LoggerManager
-from mycode.runtime.engine import AIRuntime
+from mycode.runtime.engine import RuntimeEngine
 from mycode.runtime.registry import ProviderRegistry
 from mycode.runtime.router import ProviderRouter
 
@@ -36,8 +36,8 @@ def bootstrap() -> Application:
     application.register(ProviderRegistry, registry)
     application.register(ProviderRouter, router)
 
-    runtime = AIRuntime(router)
+    runtime = RuntimeEngine(router)
 
-    application.register(AIRuntime, runtime)
+    application.register(RuntimeEngine, runtime)
 
     return application
