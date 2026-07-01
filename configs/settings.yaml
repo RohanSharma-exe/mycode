@@ -1,0 +1,17 @@
+app:
+  name: MyCode
+  version: 0.1.0
+  environment: development
+
+logging:
+  level: INFO
+  file: logs/mycode.log
+
+llm:
+  default_provider: nvidia
+  default_model: nvidia/nemotron-3-ultra-550b-a55b
+  timeout: 120
+
+security:
+  workspace_only: true
+  confirm_dangerous_commands: true

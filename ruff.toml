@@ -1,0 +1,29 @@
+# Python version
+target-version = "py313"
+
+# Maximum line length
+line-length = 100
+
+# Auto-fix whenever possible
+fix = true
+
+[lint]
+
+select = [
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "I",   # import sorting
+    "UP",  # pyupgrade
+    "B",   # bugbear
+    "SIM", # simplify
+]
+
+ignore = [
+    "E501", # handled by formatter
+]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
