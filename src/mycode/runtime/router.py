@@ -7,8 +7,8 @@ Responsible for selecting the provider used to satisfy a request.
 from __future__ import annotations
 
 from mycode.core.config import ConfigManager
-from mycode.llm.providers import BaseProvider
-from mycode.llm.registry import ProviderRegistry
+from mycode.runtime.providers import BaseProvider
+from mycode.runtime.registry import ProviderRegistry
 
 
 class ProviderRouter:

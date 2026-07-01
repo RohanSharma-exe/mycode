@@ -2,23 +2,21 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
-from mycode.core.config import ConfigManager
-from mycode.llm import (
+from mycode.runtime import (
     ChatRequest,
     ChatResponse,
     ModelInfo,
     ProviderCapabilities,
     StreamChunk,
 )
-from mycode.llm.providers import BaseProvider
-from mycode.llm.registry import ProviderRegistry
-from mycode.llm.router import ProviderRouter
+from mycode.runtime.providers import BaseProvider
+from mycode.runtime.registry import ProviderRegistry
 
 
 class FakeProvider(BaseProvider):
     @property
     def name(self) -> str:
-        return "nvidia"
+        return "fake"
 
     @property
     def default_model(self) -> str:
@@ -48,15 +46,29 @@ class FakeProvider(BaseProvider):
         return []
 
 
-def test_default_provider() -> None:
+def test_register_provider() -> None:
     registry = ProviderRegistry()
+
     registry.register(FakeProvider())
 
-    config = ConfigManager()
+    assert registry.exists("fake")
 
-    router = ProviderRouter(
-        registry=registry,
-        config=config,
-    )
 
-    assert router.default_provider().name == "nvidia"
+def test_get_provider() -> None:
+    registry = ProviderRegistry()
+
+    provider = FakeProvider()
+
+    registry.register(provider)
+
+    assert registry.get("fake") is provider
+
+
+def test_unregister_provider() -> None:
+    registry = ProviderRegistry()
+
+    registry.register(FakeProvider())
+
+    registry.unregister("fake")
+
+    assert not registry.exists("fake")

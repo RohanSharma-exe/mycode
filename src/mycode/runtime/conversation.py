@@ -6,7 +6,7 @@ Maintains conversation history independently of any LLM provider.
 
 from __future__ import annotations
 
-from mycode.llm.models import ChatMessage, MessageRole
+from mycode.runtime.models import ChatMessage, MessageRole
 
 
 class Conversation:

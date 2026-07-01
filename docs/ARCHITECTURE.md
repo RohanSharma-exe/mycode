@@ -1,518 +1,190 @@
 # MyCode Architecture
 
-## Overview
+## Philosophy
 
-MyCode is a modular, provider-agnostic AI Agent Framework designed to support multiple user interfaces (CLI, REST API, VS Code Extension, Web UI) while sharing a single application core.
+MyCode is a provider-agnostic AI Runtime.
 
-The framework follows a layered architecture with strict dependency direction and constructor dependency injection.
+Models are plugins.
 
----
+Tools are plugins.
 
-# Architecture Principles
+Agents are plugins.
 
-## 1. Single Responsibility Principle
-
-Every module should have one responsibility.
-
-Examples:
-
-* `LLMRouter` → Routes LLM requests.
-* `ToolManager` → Manages tool execution.
-* `MemoryManager` → Manages memory.
-* `Application` → Owns framework services.
-
-Avoid large classes that perform multiple unrelated tasks.
+The Runtime is the core.
 
 ---
 
-## 2. Dependency Direction
+# Layered Architecture
 
-Dependencies must always flow downward.
+                    User
+                      │
+                      ▼
+            CLI / API / VSCode
+                      │
+                      ▼
+                 Application
+                      │
+                      ▼
+                 AI Runtime
+                      │
+      ┌───────────────┼────────────────┐
+      ▼               ▼                ▼
+ Conversation      Router         Middleware
+                      │
+                      ▼
+              Provider Registry
+                      │
+                      ▼
+                  Providers
+                      │
+                      ▼
+                    Clients
+                      │
+                      ▼
+                  SDK / HTTP API
 
-```text
-CLI / API / UI
-        │
+---
+
+# Core
+
 Application
-        │
-Managers
-        │
-Services
-        │
-Providers
-        │
-Infrastructure
-```
 
-Higher layers may depend on lower layers.
+Container
 
-Lower layers must never depend on higher layers.
+Bootstrap
 
----
+ConfigManager
 
-## 3. Dependency Injection
+LoggerManager
 
-Dependencies are injected through constructors.
+EventBus
 
-Good:
-
-```python
-class LLMRouter:
-
-    def __init__(
-        self,
-        logger: Logger,
-        config: ConfigManager,
-    ) -> None:
-        ...
-```
-
-Avoid:
-
-```python
-logger = Logger()
-
-config = ConfigManager()
-```
-
-or
-
-```python
-global logger
-```
+SecurityManager
 
 ---
 
-## 4. Provider Independence
+# Runtime
 
-The framework never communicates directly with a provider.
+AIRuntime
 
-Instead:
+Conversation
 
-```text
-Agent
-    │
-LLM Router
-    │
-Base Provider
-    │
-NVIDIA
-Gemini
-Groq
-OpenRouter
-Ollama
-```
+ConversationStore
 
-Every provider implements the same interface.
+ProviderRouter
 
-Changing providers should never require changing agent code.
+ProviderRegistry
+
+ProviderFactory
 
 ---
 
-## 5. Tool Independence
+# Providers
 
-The agent never accesses the operating system directly.
+BaseProvider
 
-Instead:
+BaseClient
 
-```text
-Agent
-    │
-Tool Manager
-    │
-Filesystem Tool
-Shell Tool
-Git Tool
-Python Tool
-```
+NVIDIAProvider
 
-Every tool inherits from the same base interface.
+GeminiProvider
+
+GroqProvider
+
+OpenRouterProvider
+
+OllamaProvider
 
 ---
 
-## 6. Security
+# Future
 
-Every dangerous action passes through the security layer.
+Memory
 
-Examples:
+Planner
 
-* Shell execution
-* File deletion
-* Git push
-* Network requests
+Reasoner
 
-Security is never bypassed.
+Reflection
 
----
+Skills
 
-## 7. Event-Driven Design
-
-Components communicate through events whenever appropriate.
-
-Example:
-
-```text
-Tool Started
-
-↓
-
-Logger
-
-↓
-
-Metrics
-
-↓
+Tools
 
 Plugins
 
-↓
+MCP
 
-UI
-```
+REST API
 
-This reduces coupling between modules.
-
----
-
-## 8. Plugin-First Design
-
-Plugins may register:
-
-* Providers
-* Tools
-* Skills
-* Workflows
-* CLI Commands
-* Event Listeners
-
-Core framework code should not require modification to support plugins.
+VS Code Extension
 
 ---
 
-# Layer Responsibilities
+# Dependency Rules
 
-## CLI
+Every layer only depends on the layer below it.
 
-Responsibilities:
+Good
 
-* Parse commands.
-* Display output.
-* Forward requests to the application.
-
-The CLI contains no business logic.
-
----
-
-## Application
-
-Responsibilities:
-
-* Create shared services.
-* Initialize managers.
-* Handle startup.
-* Handle shutdown.
-
-Everything starts here.
-
----
-
-## Core
-
-Contains shared framework infrastructure.
-
-Examples:
-
-* Configuration
-* Logging
-* Registry
-* Security
-* Events
-* Utilities
-
----
-
-## LLM
-
-Responsible only for model communication.
-
-Contains:
-
-* Provider interfaces
-* Provider implementations
-* Router
-* Registry
-
-No business logic belongs here.
-
----
-
-## Tools
-
-Atomic operations.
-
-Examples:
-
-* Read file
-* Write file
-* Execute shell
-* Run Python
-* Git
-* Browser
-
-Tools should be reusable.
-
----
-
-## Skills
-
-Reusable combinations of tools.
-
-Example:
-
-Fix Python Errors
+CLI
 
 ↓
 
-Filesystem
+Runtime
 
 ↓
 
-LLM
+Router
 
 ↓
 
-Pytest
+Provider
 
 ↓
 
-Patch
+Client
 
-Skills should not directly communicate with providers.
+Bad
 
----
-
-## Workflows
-
-High-level orchestration.
-
-Example:
-
-Review Repository
+CLI
 
 ↓
 
-Read Files
+Provider
 
-↓
+Providers must never know about:
 
-Analyze
+- CLI
 
-↓
+- Runtime
 
-Generate Report
+- Agents
 
-↓
-
-Commit
-
-↓
-
-Open Pull Request
-
-Workflows coordinate multiple skills.
+- Memory
 
 ---
 
-## Agent
+# Public API
 
-Responsible for reasoning.
+The following classes are considered stable.
 
-Components include:
+Application
 
-* Planner
-* Executor
-* Reflection
-* Reasoning
+AIRuntime
 
-The agent decides *what* to do.
+Conversation
 
-Tools perform the actual work.
+ConversationStore
 
----
+ProviderRouter
 
-## Memory
+ProviderRegistry
 
-Three levels:
+ProviderFactory
 
-* Conversation Memory
-* Session Memory
-* Long-Term Memory
+BaseProvider
 
-Memory implementation should be replaceable.
+BaseClient
 
----
-
-## MCP
-
-Responsible for communication with Model Context Protocol servers.
-
-MCP servers are treated as external tool providers.
-
----
-
-## Plugins
-
-Loads third-party extensions dynamically.
-
-Plugins may extend the framework without modifying core code.
-
----
-
-# Coding Standards
-
-## Naming
-
-| Item            | Convention          |
-| --------------- | ------------------- |
-| Classes         | PascalCase          |
-| Functions       | snake_case          |
-| Variables       | snake_case          |
-| Constants       | UPPER_CASE          |
-| Private Members | _leading_underscore |
-
----
-
-## File Size
-
-Preferred:
-
-200–300 lines
-
-Maximum:
-
-500 lines
-
-Split large files into multiple modules.
-
----
-
-## Comments
-
-Comments should explain intent.
-
-Avoid obvious comments.
-
-Good:
-
-```python
-# Cache provider instances to avoid recreating clients.
-```
-
-Avoid:
-
-```python
-# Increment counter.
-counter += 1
-```
-
----
-
-## Type Hints
-
-All public functions and methods must include type hints.
-
----
-
-## Docstrings
-
-All public classes and methods require docstrings.
-
----
-
-## Async
-
-Use asynchronous programming for:
-
-* HTTP requests
-* LLM providers
-* MCP
-* Database access
-* Long-running I/O
-
-Avoid async where it provides no benefit.
-
----
-
-# External Libraries
-
-External libraries are adapters, not the architecture.
-
-Current stack:
-
-* uv
-* Ruff
-* Typer
-* Rich
-* Loguru
-* Pydantic
-* HTTPX
-* orjson
-* PyYAML
-
-Official provider SDKs are preferred over third-party wrappers when appropriate.
-
----
-
-# Future Components
-
-Planned additions:
-
-* REST API
-* VS Code Extension
-* Web Dashboard
-* Multi-Agent Collaboration
-* Voice Interface
-* Docker Integration
-* Kubernetes Support
-
-These should integrate without requiring architectural changes.
-
----
-
-# Development Workflow
-
-For every completed feature:
-
-1. Format code.
-2. Run lint checks.
-3. Execute tests.
-4. Commit changes.
-
-Recommended commands:
-
-```bash
-uv run ruff format .
-uv run ruff check .
-uv run pytest
-```
-
----
-
-# Design Philosophy
-
-MyCode is an AI Agent Framework.
-
-The LLM is a replaceable component.
-
-The framework owns:
-
-* Application lifecycle
-* Architecture
-* Tool execution
-* Memory
-* Security
-* Skills
-* Workflows
-* Plugins
-
-AI providers are implementation details behind stable interfaces.
+Breaking changes to these APIs should be avoided.

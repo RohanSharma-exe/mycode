@@ -6,9 +6,9 @@ from mycode.app.application import Application
 from mycode.core.config import ConfigManager
 from mycode.core.events import EventBus
 from mycode.core.logging import LoggerManager
-from mycode.llm.registry import ProviderRegistry
-from mycode.llm.router import ProviderRouter
-from mycode.llm.runtime import AIRuntime
+from mycode.runtime.engine import AIRuntime
+from mycode.runtime.registry import ProviderRegistry
+from mycode.runtime.router import ProviderRouter
 
 
 def bootstrap() -> Application:

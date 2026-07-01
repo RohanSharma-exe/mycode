@@ -1,4 +1,4 @@
-from mycode.llm import Conversation
+from mycode.runtime import Conversation
 
 
 def test_empty_conversation() -> None:

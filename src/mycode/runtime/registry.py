@@ -4,11 +4,11 @@ Provider registry.
 
 from __future__ import annotations
 
-from mycode.llm.exceptions import (
+from mycode.runtime.exceptions import (
     ProviderAlreadyRegisteredError,
     ProviderNotFoundError,
 )
-from mycode.llm.providers import BaseProvider
+from mycode.runtime.providers import BaseProvider
 
 
 class ProviderRegistry:

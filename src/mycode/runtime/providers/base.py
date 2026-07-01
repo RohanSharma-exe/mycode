@@ -7,8 +7,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
 
-from mycode.llm.capabilities import ProviderCapabilities
-from mycode.llm.models import ChatRequest, ChatResponse, ModelInfo, StreamChunk
+from mycode.runtime.capabilities import ProviderCapabilities
+from mycode.runtime.models import ChatRequest, ChatResponse, ModelInfo, StreamChunk
 
 
 class BaseProvider(ABC):

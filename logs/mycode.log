@@ -5,3 +5,4 @@
 2026-07-01 21:54:39.041 | WARNING  | mycode.core.logging.manager:warning:65 - This is a test warning.
 2026-07-01 21:54:39.041 | ERROR    | mycode.core.logging.manager:error:69 - This is a test error.
 2026-07-01 22:02:07.271 | SUCCESS  | mycode.core.logging.manager:success:61 - Received Event -> app.started
+2026-07-02 01:49:24.145 | SUCCESS  | mycode.core.logging.manager:success:61 - Doctor completed successfully.

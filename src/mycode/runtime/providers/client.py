@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from mycode.llm.models import ChatRequest, ChatResponse
+from mycode.runtime.models import ChatRequest, ChatResponse
 
 
 class BaseClient(ABC):

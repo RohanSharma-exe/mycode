@@ -2,10 +2,11 @@
 LLM package.
 """
 
-from mycode.llm.capabilities import ProviderCapabilities
-from mycode.llm.conversation import Conversation
-from mycode.llm.factory import ProviderFactory
-from mycode.llm.models import (
+from mycode.runtime.capabilities import ProviderCapabilities
+from mycode.runtime.conversation import Conversation
+from mycode.runtime.engine import AIRuntime
+from mycode.runtime.factory import ProviderFactory
+from mycode.runtime.models import (
     ChatMessage,
     ChatRequest,
     ChatResponse,
@@ -16,9 +17,8 @@ from mycode.llm.models import (
     ToolCall,
     ToolResult,
 )
-from mycode.llm.registry import ProviderRegistry
-from mycode.llm.router import ProviderRouter
-from mycode.llm.runtime import AIRuntime
+from mycode.runtime.registry import ProviderRegistry
+from mycode.runtime.router import ProviderRouter
 
 __all__ = [
     "ProviderCapabilities",

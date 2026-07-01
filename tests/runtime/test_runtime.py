@@ -1,5 +1,5 @@
-from mycode.llm.conversation import Conversation
-from mycode.llm.runtime import AIRuntime
+from mycode.runtime.conversation import Conversation
+from mycode.runtime.engine import AIRuntime
 
 
 class DummyRouter:

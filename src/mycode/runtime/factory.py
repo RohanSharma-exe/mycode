@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from mycode.llm.providers import BaseProvider
+from mycode.runtime.providers import BaseProvider
 
 ProviderBuilder = Callable[[], BaseProvider]
 

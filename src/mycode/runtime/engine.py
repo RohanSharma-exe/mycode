@@ -6,12 +6,12 @@ Coordinates conversations and providers.
 
 from __future__ import annotations
 
-from mycode.llm.conversation import Conversation
-from mycode.llm.models import ChatRequest, ChatResponse
-from mycode.llm.router import ProviderRouter
+from mycode.runtime.conversation import Conversation
+from mycode.runtime.models import ChatRequest, ChatResponse
+from mycode.runtime.router import ProviderRouter
 
 
-class AIRuntime:
+class RuntimeEngine:
     """Main AI runtime."""
 
     def __init__(
