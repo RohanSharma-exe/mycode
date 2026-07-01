@@ -8,6 +8,7 @@ from mycode.core.events import EventBus
 from mycode.core.logging import LoggerManager
 from mycode.llm.registry import ProviderRegistry
 from mycode.llm.router import ProviderRouter
+from mycode.llm.runtime import AIRuntime
 
 
 def bootstrap() -> Application:
@@ -34,5 +35,9 @@ def bootstrap() -> Application:
 
     application.register(ProviderRegistry, registry)
     application.register(ProviderRouter, router)
+
+    runtime = AIRuntime(router)
+
+    application.register(AIRuntime, runtime)
 
     return application

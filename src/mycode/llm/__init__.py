@@ -18,6 +18,7 @@ from mycode.llm.models import (
 )
 from mycode.llm.registry import ProviderRegistry
 from mycode.llm.router import ProviderRouter
+from mycode.llm.runtime import AIRuntime
 
 __all__ = [
     "ProviderCapabilities",
@@ -34,4 +35,5 @@ __all__ = [
     "ProviderFactory",
     "ProviderRegistry",
     "ProviderRouter",
+    "AIRuntime",
 ]
