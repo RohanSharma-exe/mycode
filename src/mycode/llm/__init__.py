@@ -17,6 +17,7 @@ from mycode.llm.models import (
     ToolResult,
 )
 from mycode.llm.registry import ProviderRegistry
+from mycode.llm.router import ProviderRouter
 
 __all__ = [
     "ProviderCapabilities",
@@ -32,4 +33,5 @@ __all__ = [
     "Conversation",
     "ProviderFactory",
     "ProviderRegistry",
+    "ProviderRouter",
 ]
