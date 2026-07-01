@@ -1,28 +1,68 @@
 """
-Command-line interface.
+MyCode command-line interface.
 """
+
+from __future__ import annotations
 
 import typer
 
-from mycode.llm import ProviderCapabilities
+from mycode.app.bootstrap import bootstrap
+from mycode.core.config import ConfigManager
+from mycode.core.logging import LoggerManager
 
-cli = typer.Typer(
+app = typer.Typer(
+    name="mycode",
     help="Production-grade AI Agent Framework.",
+    no_args_is_help=True,
 )
 
 
-class ExampleService:
-    """Temporary service for testing."""
+@app.command()
+def doctor() -> None:
+    """Display framework diagnostics."""
+
+    application = bootstrap()
+
+    config = application.resolve(ConfigManager)
+    logger = application.resolve(LoggerManager)
+
+    typer.echo("=== MyCode Doctor ===")
+    typer.echo(f"Application : {config.settings.app.name}")
+    typer.echo(f"Version     : {config.settings.app.version}")
+    typer.echo(f"Environment : {config.settings.app.environment}")
+    typer.echo(f"Provider    : {config.settings.llm.default_provider}")
+    typer.echo(f"Model       : {config.settings.llm.default_model}")
+    typer.echo(f"Ollama URL  : {config.environment.OLLAMA_BASE_URL}")
+
+    logger.success("Doctor completed successfully.")
 
 
-@cli.callback(invoke_without_command=True)
+@app.command()
+def version() -> None:
+    """Display framework version."""
+
+    application = bootstrap()
+
+    config = application.resolve(ConfigManager)
+
+    typer.echo(f"{config.settings.app.name} v{config.settings.app.version}")
+
+
+@app.command()
+def config() -> None:
+    """Display the loaded configuration."""
+
+    application = bootstrap()
+
+    config_manager = application.resolve(ConfigManager)
+
+    typer.echo(config_manager.settings.model_dump_json(indent=4))
+
+
 def main() -> None:
-    """Start MyCode."""
+    """CLI entry point."""
+    app()
 
-    capabilities = ProviderCapabilities(
-        streaming=True,
-        reasoning=True,
-        tool_calling=True,
-    )
 
-    typer.echo(capabilities.model_dump_json(indent=4))
+if __name__ == "__main__":
+    main()

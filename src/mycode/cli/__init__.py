@@ -1,7 +1,7 @@
 """
-Command Line Interface package.
+CLI package.
 """
 
-from mycode.cli.app import cli
+from mycode.cli.app import app
 
-__all__ = ["cli"]
+__all__ = ["app"]
