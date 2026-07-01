@@ -1,8 +1,5 @@
 """
 Core models used by the AI Runtime.
-
-These models are provider-independent and represent the
-standard interface used throughout MyCode.
 """
 
 from __future__ import annotations
@@ -14,7 +11,7 @@ from pydantic import BaseModel, Field
 
 
 class MessageRole(StrEnum):
-    """Supported chat message roles."""
+    """Supported message roles."""
 
     SYSTEM = "system"
     USER = "user"
@@ -23,7 +20,7 @@ class MessageRole(StrEnum):
 
 
 class ChatMessage(BaseModel):
-    """Represents a single chat message."""
+    """Single message."""
 
     role: MessageRole
 
@@ -33,7 +30,7 @@ class ChatMessage(BaseModel):
 
 
 class TokenUsage(BaseModel):
-    """Token usage information."""
+    """Token usage."""
 
     prompt_tokens: int = 0
 
@@ -43,7 +40,7 @@ class TokenUsage(BaseModel):
 
 
 class ToolCall(BaseModel):
-    """Represents a tool call requested by the model."""
+    """Tool call."""
 
     id: str
 
@@ -53,15 +50,33 @@ class ToolCall(BaseModel):
 
 
 class ToolResult(BaseModel):
-    """Represents the result returned by a tool."""
+    """Tool result."""
 
     tool_call_id: str
 
     content: str
 
 
+class ModelInfo(BaseModel):
+    """Information about a model."""
+
+    id: str
+
+    provider: str
+
+    context_window: int
+
+    max_output_tokens: int
+
+    reasoning: bool = False
+
+    vision: bool = False
+
+    tool_calling: bool = False
+
+
 class ChatRequest(BaseModel):
-    """Request sent to an LLM provider."""
+    """Provider request."""
 
     messages: list[ChatMessage]
 
@@ -75,7 +90,7 @@ class ChatRequest(BaseModel):
 
 
 class ChatResponse(BaseModel):
-    """Response returned by an LLM provider."""
+    """Provider response."""
 
     message: ChatMessage
 
@@ -89,7 +104,7 @@ class ChatResponse(BaseModel):
 
 
 class StreamChunk(BaseModel):
-    """Represents one streamed chunk."""
+    """Streaming chunk."""
 
     content: str = ""
 

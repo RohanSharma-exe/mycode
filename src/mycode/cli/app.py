@@ -4,7 +4,7 @@ Command-line interface.
 
 import typer
 
-from mycode.llm import ChatMessage, ChatRequest, MessageRole
+from mycode.llm import ProviderCapabilities
 
 cli = typer.Typer(
     help="Production-grade AI Agent Framework.",
@@ -19,13 +19,10 @@ class ExampleService:
 def main() -> None:
     """Start MyCode."""
 
-    request = ChatRequest(
-        messages=[
-            ChatMessage(
-                role=MessageRole.USER,
-                content="Hello MyCode!",
-            )
-        ]
+    capabilities = ProviderCapabilities(
+        streaming=True,
+        reasoning=True,
+        tool_calling=True,
     )
 
-    typer.echo(request.model_dump_json(indent=4))
+    typer.echo(capabilities.model_dump_json(indent=4))
