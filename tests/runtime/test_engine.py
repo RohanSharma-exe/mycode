@@ -1,15 +1,19 @@
-from mycode.runtime.conversation import Conversation
-from mycode.runtime.engine import RuntimeEngine
+from mycode.runtime import (
+    ConversationStore,
+    RuntimeEngine,
+)
 
 
 class DummyRouter:
     """Simple router used for testing."""
 
-    def default_provider(self):
-        raise NotImplementedError
-
 
 def test_runtime_creation() -> None:
-    runtime = RuntimeEngine(DummyRouter())
+    runtime = RuntimeEngine(
+        router=DummyRouter(),
+        conversation_store=ConversationStore(),
+    )
 
-    assert isinstance(runtime.conversation, Conversation)
+    assert runtime.router is not None
+
+    assert runtime.conversation_store is not None

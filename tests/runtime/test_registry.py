@@ -7,6 +7,7 @@ from mycode.runtime import (
     ChatResponse,
     ModelInfo,
     ProviderCapabilities,
+    ProviderConfig,
     StreamChunk,
 )
 from mycode.runtime.providers import BaseProvider
@@ -14,13 +15,21 @@ from mycode.runtime.registry import ProviderRegistry
 
 
 class FakeProvider(BaseProvider):
+    def __init__(self) -> None:
+        super().__init__(
+            ProviderConfig(
+                name="fake",
+                model="fake-model",
+            )
+        )
+
     @property
     def name(self) -> str:
-        return "fake"
+        return self.config.name
 
     @property
     def default_model(self) -> str:
-        return "fake-model"
+        return self.config.model
 
     @property
     def capabilities(self) -> ProviderCapabilities:

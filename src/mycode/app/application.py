@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import httpx
+
 from mycode.app.container import Container
 
 
@@ -24,3 +26,13 @@ class Application:
     def resolve(self, service_type: type[Any]) -> Any:
         """Resolve a shared service."""
         return self.container.resolve(service_type)
+
+    async def shutdown(self) -> None:
+        """Release shared resources."""
+
+        try:
+            client: httpx.AsyncClient = self.get(httpx.AsyncClient)
+            await client.aclose()
+        except KeyError:
+            # Async client wasn't registered.
+            pass

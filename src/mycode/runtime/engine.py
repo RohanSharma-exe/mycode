@@ -7,6 +7,7 @@ Coordinates conversations and providers.
 from __future__ import annotations
 
 from mycode.runtime.conversation import Conversation
+from mycode.runtime.conversation_store import ConversationStore
 from mycode.runtime.models import ChatRequest, ChatResponse
 from mycode.runtime.router import ProviderRouter
 
@@ -17,9 +18,22 @@ class RuntimeEngine:
     def __init__(
         self,
         router: ProviderRouter,
+        conversation_store: ConversationStore,
     ) -> None:
+        """Initialize the runtime."""
+
         self._router = router
-        self._conversation = Conversation()
+        self._conversation_store = conversation_store
+
+    @property
+    def router(self) -> ProviderRouter:
+        """Return the provider router."""
+        return self._router
+
+    @property
+    def conversation_store(self) -> ConversationStore:
+        """Return the conversation store."""
+        return self._conversation_store
 
     @property
     def conversation(self) -> Conversation:

@@ -9,10 +9,19 @@ from collections.abc import AsyncIterator
 
 from mycode.runtime.capabilities import ProviderCapabilities
 from mycode.runtime.models import ChatRequest, ChatResponse, ModelInfo, StreamChunk
+from mycode.runtime.provider_config import ProviderConfig
 
 
 class BaseProvider(ABC):
     """Base class for every provider."""
+
+    def __init__(
+        self,
+        config: ProviderConfig,
+    ) -> None:
+        """Initialize the provider."""
+
+        self._config = config
 
     @property
     @abstractmethod
@@ -28,6 +37,11 @@ class BaseProvider(ABC):
     @abstractmethod
     def capabilities(self) -> ProviderCapabilities:
         """Provider capabilities."""
+
+    @property
+    def config(self) -> ProviderConfig:
+        """Return provider configuration."""
+        return self._config
 
     @abstractmethod
     async def generate(

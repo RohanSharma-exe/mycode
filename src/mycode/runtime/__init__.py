@@ -4,6 +4,7 @@ LLM package.
 
 from mycode.runtime.capabilities import ProviderCapabilities
 from mycode.runtime.conversation import Conversation
+from mycode.runtime.conversation_store import ConversationStore
 from mycode.runtime.engine import RuntimeEngine
 from mycode.runtime.factory import ProviderFactory
 from mycode.runtime.models import (
@@ -17,6 +18,7 @@ from mycode.runtime.models import (
     ToolCall,
     ToolResult,
 )
+from mycode.runtime.provider_config import ProviderConfig
 from mycode.runtime.registry import ProviderRegistry
 from mycode.runtime.router import ProviderRouter
 
@@ -36,4 +38,6 @@ __all__ = [
     "ProviderRegistry",
     "ProviderRouter",
     "RuntimeEngine",
+    "ConversationStore",
+    "ProviderConfig",
 ]
