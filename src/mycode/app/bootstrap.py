@@ -8,6 +8,7 @@ from mycode.app.application import Application
 from mycode.core.config import ConfigManager
 from mycode.core.events import EventBus
 from mycode.core.logging import LoggerManager
+from mycode.runtime import ProviderConfig
 from mycode.runtime.conversation_store import ConversationStore
 from mycode.runtime.engine import RuntimeEngine
 from mycode.runtime.factory import ProviderFactory
@@ -22,6 +23,16 @@ def bootstrap() -> Application:
     application = Application()
 
     config = ConfigManager()
+
+    nvidia_config = ProviderConfig(
+        name="nvidia",
+        api_key=config.env.nvidia_api_key,
+        model=config.settings.llm.default_model,
+        base_url=config.settings.providers.nvidia.base_url,
+        timeout=config.settings.llm.timeout,
+        temperature=config.settings.llm.temperature,
+        max_tokens=config.settings.llm.max_tokens,
+    )
 
     logger = LoggerManager(config)
 
@@ -63,6 +74,8 @@ def bootstrap() -> Application:
     )
 
     application.register(ConfigManager, config)
+
+    application.register(ProviderConfig, nvidia_config)
 
     application.register(LoggerManager, logger)
 

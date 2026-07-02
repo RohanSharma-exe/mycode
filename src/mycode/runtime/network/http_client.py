@@ -32,7 +32,7 @@ class HTTPClient:
         *,
         headers: dict[str, str] | None = None,
         params: dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
+    ) -> httpx.Response:
         """Perform a GET request."""
 
         try:
@@ -44,7 +44,7 @@ class HTTPClient:
 
             response.raise_for_status()
 
-            return response.json()
+            return response
 
         except httpx.HTTPStatusError as exc:
             raise HTTPResponseError(str(exc)) from exc
@@ -58,7 +58,7 @@ class HTTPClient:
         *,
         headers: dict[str, str] | None = None,
         json: dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
+    ) -> httpx.Response:
         """Perform a POST request."""
 
         try:
@@ -70,7 +70,7 @@ class HTTPClient:
 
             response.raise_for_status()
 
-            return response.json()
+            return response
 
         except httpx.HTTPStatusError as exc:
             raise HTTPResponseError(str(exc)) from exc

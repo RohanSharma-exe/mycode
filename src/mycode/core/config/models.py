@@ -24,8 +24,14 @@ class LLMConfig(BaseModel):
     """Default LLM settings."""
 
     default_provider: str
+
     default_model: str
+
     timeout: int
+
+    temperature: float
+
+    max_tokens: int
 
 
 class SecurityConfig(BaseModel):

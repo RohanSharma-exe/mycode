@@ -46,8 +46,10 @@ class NVIDIAClient:
             "stream": False,
         }
 
-        return await self._http.post(
+        response = await self._http.post(
             f"{self.BASE_URL}/chat/completions",
             headers=self.headers,
             json=payload,
         )
+
+        return response.json()
