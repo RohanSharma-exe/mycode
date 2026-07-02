@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from mycode.runtime.models import ChatRequest
 from mycode.runtime.network import HTTPClient
 from mycode.runtime.provider_config import ProviderConfig
 
@@ -13,13 +14,17 @@ from mycode.runtime.provider_config import ProviderConfig
 class NVIDIAClient:
     """Low-level NVIDIA API client."""
 
-    BASE_URL = "https://integrate.api.nvidia.com/v1"
-
     def __init__(
         self,
         http_client: HTTPClient,
         config: ProviderConfig,
     ) -> None:
+        if not config.api_key:
+            raise ValueError("NVIDIA_API_KEY is not configured.")
+
+        if not config.base_url:
+            raise ValueError("NVIDIA_BASE_URL is not configured.")
+
         self._http = http_client
         self._config = config
 
@@ -34,20 +39,26 @@ class NVIDIAClient:
 
     async def chat(
         self,
-        messages: list[dict[str, Any]],
+        request: ChatRequest,
     ) -> dict[str, Any]:
-        """Call NVIDIA Chat Completions."""
+        """Call the NVIDIA Chat Completions API."""
 
         payload = {
-            "model": self._config.model,
-            "messages": messages,
-            "temperature": self._config.temperature,
-            "max_tokens": self._config.max_tokens,
-            "stream": False,
+            "model": request.model or self._config.model,
+            "messages": [
+                {
+                    "role": message.role.value,
+                    "content": message.content,
+                }
+                for message in request.messages
+            ],
+            "temperature": request.temperature,
+            "max_tokens": request.max_tokens or self._config.max_tokens,
+            "stream": request.stream,
         }
 
         response = await self._http.post(
-            f"{self.BASE_URL}/chat/completions",
+            f"{self._config.base_url}/chat/completions",
             headers=self.headers,
             json=payload,
         )

@@ -14,10 +14,6 @@ llm:
   temperature: 0.7
   max_tokens: 4096
 
-providers:
-  nvidia:
-    base_url: https://integrate.api.nvidia.com/v1
-
 security:
   workspace_only: true
   confirm_dangerous_commands: true

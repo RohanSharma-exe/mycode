@@ -2,6 +2,8 @@
 Framework bootstrap.
 """
 
+from __future__ import annotations
+
 import httpx
 
 from mycode.app.application import Application
@@ -13,26 +15,36 @@ from mycode.runtime.conversation_store import ConversationStore
 from mycode.runtime.engine import RuntimeEngine
 from mycode.runtime.factory import ProviderFactory
 from mycode.runtime.network import HTTPClient
+from mycode.runtime.providers.nvidia_client import NVIDIAClient
+from mycode.runtime.providers.nvidia_provider import NVIDIAProvider
 from mycode.runtime.registry import ProviderRegistry
 from mycode.runtime.router import ProviderRouter
 
 
 def bootstrap() -> Application:
-    """Initialize the application."""
+    """Build the application and register all shared services."""
 
     application = Application()
 
+    # ------------------------------------------------------------------
+    # Configuration
+    # ------------------------------------------------------------------
+
     config = ConfigManager()
 
-    nvidia_config = ProviderConfig(
+    provider_config = ProviderConfig(
         name="nvidia",
-        api_key=config.env.nvidia_api_key,
+        api_key=config.environment.NVIDIA_API_KEY,
+        base_url=config.environment.NVIDIA_BASE_URL,
         model=config.settings.llm.default_model,
-        base_url=config.settings.providers.nvidia.base_url,
         timeout=config.settings.llm.timeout,
         temperature=config.settings.llm.temperature,
         max_tokens=config.settings.llm.max_tokens,
     )
+
+    # ------------------------------------------------------------------
+    # Core Services
+    # ------------------------------------------------------------------
 
     logger = LoggerManager(config)
 
@@ -49,37 +61,52 @@ def bootstrap() -> Application:
 
     conversation_store = ConversationStore()
 
+    # ------------------------------------------------------------------
+    # Networking
+    # ------------------------------------------------------------------
+
     async_client = httpx.AsyncClient(
         timeout=config.settings.llm.timeout,
     )
 
     http_client = HTTPClient(async_client)
 
+    # ------------------------------------------------------------------
+    # Providers
+    # ------------------------------------------------------------------
+
+    nvidia_client = NVIDIAClient(
+        http_client=http_client,
+        config=provider_config,
+    )
+
+    nvidia_provider = NVIDIAProvider(
+        config=provider_config,
+        client=nvidia_client,
+    )
+
+    registry.register(nvidia_provider)
+
+    # ------------------------------------------------------------------
+    # Runtime
+    # ------------------------------------------------------------------
+
     runtime = RuntimeEngine(
         router=router,
         conversation_store=conversation_store,
     )
 
-    application.register(ConfigManager, config)
-    application.register(LoggerManager, logger)
-    events = EventBus()
-
-    application.register(EventBus, events)
-
-    registry = ProviderRegistry()
-
-    router = ProviderRouter(
-        registry=registry,
-        config=config,
-    )
+    # ------------------------------------------------------------------
+    # Dependency Injection
+    # ------------------------------------------------------------------
 
     application.register(ConfigManager, config)
-
-    application.register(ProviderConfig, nvidia_config)
 
     application.register(LoggerManager, logger)
 
     application.register(EventBus, events)
+
+    application.register(ProviderConfig, provider_config)
 
     application.register(ProviderRegistry, registry)
 

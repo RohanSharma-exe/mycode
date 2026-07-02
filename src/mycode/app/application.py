@@ -19,11 +19,18 @@ class Application:
     def __init__(self) -> None:
         self.container = Container()
 
-    def register(self, service_type: type[Any], instance: Any) -> None:
+    def register(
+        self,
+        service_type: type[Any],
+        instance: Any,
+    ) -> None:
         """Register a shared service."""
         self.container.register(service_type, instance)
 
-    def resolve(self, service_type: type[Any]) -> Any:
+    def resolve(
+        self,
+        service_type: type[Any],
+    ) -> Any:
         """Resolve a shared service."""
         return self.container.resolve(service_type)
 
@@ -31,8 +38,7 @@ class Application:
         """Release shared resources."""
 
         try:
-            client: httpx.AsyncClient = self.get(httpx.AsyncClient)
+            client: httpx.AsyncClient = self.resolve(httpx.AsyncClient)
             await client.aclose()
         except KeyError:
-            # Async client wasn't registered.
             pass

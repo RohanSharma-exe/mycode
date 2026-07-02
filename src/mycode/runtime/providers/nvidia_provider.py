@@ -53,15 +53,12 @@ class NVIDIAProvider(BaseProvider):
     ) -> ChatResponse:
         """Generate a response."""
 
-        response = await self._client.chat(
-            [
-                {
-                    "role": message.role.value,
-                    "content": message.content,
-                }
-                for message in request.messages
-            ]
-        )
+        response = await self._client.chat(request)
+
+        if "choices" not in response:
+            raise RuntimeError(
+                response.get("error", {}).get("message", "Unexpected response from NVIDIA.")
+            )
 
         choice = response["choices"][0]
         message = choice["message"]

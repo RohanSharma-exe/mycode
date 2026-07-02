@@ -6,7 +6,6 @@ Coordinates conversations and providers.
 
 from __future__ import annotations
 
-from mycode.runtime.conversation import Conversation
 from mycode.runtime.conversation_store import ConversationStore
 from mycode.runtime.models import ChatRequest, ChatResponse
 from mycode.runtime.router import ProviderRouter
@@ -35,31 +34,14 @@ class RuntimeEngine:
         """Return the conversation store."""
         return self._conversation_store
 
-    @property
-    def conversation(self) -> Conversation:
-        """Return the active conversation."""
-        return self._conversation
-
     async def chat(
         self,
         request: ChatRequest,
     ) -> ChatResponse:
         """
-        Send a chat request using the default provider.
+        Generate a chat response using the configured provider.
         """
-
-        # Keep the runtime's conversation synchronized.
-        for message in request.messages:
-            self._conversation.add_message(message)
 
         provider = self._router.default_provider()
 
-        response = await provider.generate(request)
-
-        self._conversation.add_message(response.message)
-
-        return response
-
-    def clear(self) -> None:
-        """Clear the current conversation."""
-        self._conversation.clear()
+        return await provider.generate(request)
