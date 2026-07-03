@@ -170,7 +170,7 @@ mycode/
 ## Clone
 
 ```bash
-git clone https://github.com/<your-username>/mycode.git
+git clone https://github.com/RohanSharma-exe/mycode.git
 
 cd mycode
 ```
