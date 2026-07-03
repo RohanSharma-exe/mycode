@@ -1,29 +1,83 @@
 # Contributing to MyCode
 
-First of all, thank you for your interest in contributing to MyCode!
+First of all, thank you for considering contributing to **MyCode**.
 
-MyCode is a production-grade, provider-agnostic AI Agent Framework designed to be modular, extensible, and maintainable. Whether you're fixing a bug, improving documentation, or adding a new feature, your contribution is appreciated.
+Whether you're fixing a typo, improving documentation, reporting a bug, or implementing a new feature, every contribution is appreciated.
+
+Our goal is to build a production-grade AI framework with a clean architecture, excellent developer experience, and long-term maintainability.
+
+---
+
+# Table of Contents
+
+1. Before You Start
+2. Ways to Contribute
+3. Development Environment
+4. Project Structure
+5. Development Workflow
+6. Branch Strategy
+7. Coding Standards
+8. Testing Requirements
+9. Documentation Requirements
+10. Commit Message Convention
+11. Pull Request Process
+12. Review Guidelines
+13. Reporting Bugs
+14. Requesting Features
+15. Security Issues
+16. Community Guidelines
 
 ---
 
 # Before You Start
 
-Please read the following documents before contributing:
+Please read the following documents before contributing.
 
-* `README.md`
-* `docs/ARCHITECTURE.md`
-* `docs/CODING_STANDARDS.md`
+- README.md
+- ARCHITECTURE.md
+- CODING_STANDARDS.md
 
-These documents describe the project's architecture, coding conventions, and development philosophy.
+Understanding the architecture before writing code will save both you and the reviewers time.
 
 ---
 
-# Development Setup
+# Ways to Contribute
+
+Contributions are welcome in many forms.
+
+Examples include:
+
+- Bug fixes
+- New providers
+- Runtime improvements
+- Documentation
+- Tests
+- Performance optimizations
+- Tool integrations
+- Memory backends
+- Workflow components
+- MCP integrations
+- Examples and tutorials
+
+Not every contribution has to involve writing code.
+
+---
+
+# Development Environment
+
+## Requirements
+
+- Python 3.14+
+- Git
+- uv
+- Ruff
+- Pytest
 
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/<username>/mycode.git
+
 cd mycode
 ```
 
@@ -33,156 +87,394 @@ Install dependencies:
 uv sync
 ```
 
-Run the application:
+Verify installation:
 
 ```bash
-uv run mycode
+uv run mycode doctor
 ```
+
+---
+
+# Project Structure
+
+```
+src/mycode/
+
+app/
+cli/
+core/
+runtime/
+memory/
+providers/
+tools/
+agents/
+workflows/
+```
+
+Each package has a clearly defined responsibility.
+
+Please avoid mixing unrelated functionality.
 
 ---
 
 # Development Workflow
 
-1. Create a feature branch.
-2. Implement the change.
-3. Format the code.
-4. Run lint checks.
-5. Run tests.
-6. Commit with a descriptive message.
-7. Open a pull request.
+The preferred workflow is:
+
+```
+Issue
+
+↓
+
+Discussion
+
+↓
+
+Branch
+
+↓
+
+Implementation
+
+↓
+
+Tests
+
+↓
+
+Documentation
+
+↓
+
+Pull Request
+
+↓
+
+Review
+
+↓
+
+Merge
+```
+
+Every change should include:
+
+- Code
+- Tests
+- Documentation updates (if applicable)
+
+---
+
+# Branch Strategy
+
+Never work directly on `main`.
+
+Create a feature branch.
+
+Examples:
+
+```
+feature/conversation-memory
+
+feature/groq-provider
+
+feature/tool-calling
+```
+
+Bug fixes:
+
+```
+fix/http-timeout
+
+fix/provider-router
+```
+
+Documentation:
+
+```
+docs/runtime
+
+docs/readme
+```
+
+---
+
+# Coding Standards
+
+All code must follow:
+
+```
+docs/CODING_STANDARDS.md
+```
+
+Highlights:
+
+- Type hints
+- Async I/O
+- Dependency Injection
+- Single Responsibility Principle
+- Google-style docstrings
+
+---
+
+# Testing Requirements
+
+Every feature should include tests.
+
+Required:
+
+- Unit tests
+
+Recommended:
+
+- Integration tests
+
+Run before every commit:
+
+```bash
+uv run ruff format .
+
+uv run ruff check .
+
+uv run pytest
+```
+
+No Pull Request will be accepted if tests fail.
+
+---
+
+# Documentation Requirements
+
+Documentation is considered part of the feature.
+
+Examples:
+
+New provider?
+
+Update:
+
+```
+PROVIDERS.md
+```
+
+New runtime feature?
+
+Update:
+
+```
+RUNTIME.md
+```
+
+New CLI command?
+
+Update:
+
+```
+README.md
+```
+
+Documentation should evolve together with the code.
 
 ---
 
 # Commit Message Convention
 
-Use Conventional Commits.
+We follow the Conventional Commits specification.
 
 Examples:
 
-```text
-feat(llm): add NVIDIA provider
-feat(runtime): implement conversation manager
-fix(logging): resolve file rotation issue
-refactor(core): simplify container
-docs: update architecture guide
-test(router): add provider selection tests
+```
+feat(runtime): add streaming support
+
+feat(provider): implement Groq provider
+
+fix(cli): improve prompt handling
+
+refactor(runtime): simplify provider routing
+
+docs(readme): update installation guide
+
+test(runtime): improve conversation tests
 ```
 
----
+Avoid messages like:
 
-# Pull Requests
+```
+Update
 
-A pull request should:
+Changes
 
-* Solve one logical problem.
-* Include tests when appropriate.
-* Keep changes focused.
-* Update documentation if behavior changes.
+Fix
 
-Avoid combining unrelated changes into a single pull request.
+Done
 
----
-
-# Code Reviews
-
-Reviewers may request changes to improve:
-
-* Architecture
-* Maintainability
-* Performance
-* Security
-* Readability
-* Test coverage
-
-Code review feedback is intended to improve the project rather than criticize contributors.
-
----
-
-# Testing
-
-Before submitting changes, run:
-
-```bash
-uv run ruff format .
-uv run ruff check .
-uv run pytest
+Final
 ```
 
-All checks should pass before opening a pull request.
+Every commit should describe exactly what changed.
 
 ---
 
-# Architecture Rules
+# Pull Request Process
 
-Do not bypass framework abstractions.
+A Pull Request should focus on **one logical change**.
 
-Examples:
+Good examples:
 
-✅ Agent → Runtime → Router → Provider
+- Add OpenAI provider
+- Improve HTTP retry logic
+- Add streaming support
 
-❌ Agent → Provider
+Avoid combining unrelated work.
 
----
+Example of a bad PR:
 
-Providers must never communicate directly with the CLI, UI, or Agent.
+```
+- Added provider
+- Fixed logger
+- Updated README
+- Improved tests
+- Refactored runtime
+```
 
-Tools must never access providers directly.
-
-Every layer should communicate only with the layer immediately below it.
-
----
-
-# Adding a New Provider
-
-When adding a provider:
-
-1. Implement `BaseClient`.
-2. Implement `BaseProvider`.
-3. Register the provider.
-4. Add tests.
-5. Update documentation if necessary.
-
-Avoid introducing provider-specific logic into the runtime.
+Break unrelated changes into separate Pull Requests.
 
 ---
 
-# Adding a Tool
+# Pull Request Checklist
 
-Every tool should:
+Before opening a Pull Request:
 
-* Perform one responsibility.
-* Return predictable results.
-* Be reusable.
-* Avoid side effects where possible.
+- Code compiles
+- Ruff passes
+- Tests pass
+- Documentation updated
+- No secrets committed
+- No debug code
+- No unused imports
+- No commented-out code
 
-Business logic belongs in Skills or Workflows, not individual tools.
+---
+
+# Code Review Guidelines
+
+Reviewers will primarily look for:
+
+## Correctness
+
+Does the feature work?
+
+---
+
+## Architecture
+
+Does it respect the project architecture?
+
+---
+
+## Readability
+
+Is the code easy to understand?
+
+---
+
+## Testing
+
+Are there enough tests?
+
+---
+
+## Documentation
+
+Does the documentation explain the feature?
 
 ---
 
 # Reporting Bugs
 
-When reporting bugs, include:
+When reporting a bug, include:
 
-* Operating system
-* Python version
-* MyCode version
-* Relevant logs
-* Steps to reproduce
-* Expected behavior
-* Actual behavior
+- Operating System
+- Python version
+- MyCode version
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Error logs
+
+The more information provided, the easier it is to reproduce the issue.
 
 ---
 
-# Philosophy
+# Requesting Features
 
-MyCode values:
+Feature requests should explain:
 
-* Simplicity
-* Modularity
-* Explicit APIs
-* Strong typing
-* Provider independence
-* Security by default
-* Long-term maintainability
+- The problem being solved
+- Why the current implementation is insufficient
+- The proposed solution
+- Possible alternatives
 
-When in doubt, prefer clarity over cleverness.
+Design discussions are encouraged before implementation.
+
+---
+
+# Security Issues
+
+Do **not** open a public issue for security vulnerabilities.
+
+Examples:
+
+- API key exposure
+- Authentication bypass
+- Remote code execution
+- Secret leakage
+
+Instead, contact the maintainers privately.
+
+---
+
+# Community Guidelines
+
+Please be respectful.
+
+Constructive criticism is welcome.
+
+Personal attacks are not.
+
+We want MyCode to be a friendly place for developers of all experience levels.
+
+---
+
+# Design Philosophy
+
+Every contribution should improve one or more of the following:
+
+- Simplicity
+- Maintainability
+- Performance
+- Reliability
+- Developer Experience
+
+Avoid unnecessary complexity.
+
+---
+
+# Definition of Done
+
+A feature is considered complete when:
+
+- Implementation is finished
+- Tests pass
+- Documentation is updated
+- Code review is approved
+- CI passes
+- The feature is merged
+
+---
+
+# Thank You
+
+Thank you for helping improve MyCode.
+
+Every contribution, no matter how small, helps make the framework better for everyone.

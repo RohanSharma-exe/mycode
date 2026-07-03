@@ -1,293 +1,652 @@
 # MyCode Coding Standards
 
-This document defines the coding standards used throughout the MyCode project.
+> **Version:** v1.0
+>
+> These standards apply to every line of code written for MyCode.
+>
+> The goal is consistency, readability, maintainability, and production-quality software.
+
+---
+
+# Table of Contents
+
+1. Philosophy
+2. General Principles
+3. Project Structure
+4. Python Standards
+5. Naming Conventions
+6. File Organization
+7. Imports
+8. Type Hints
+9. Documentation
+10. Error Handling
+11. Logging
+12. Async Programming
+13. Dependency Injection
+14. Configuration
+15. Providers
+16. Runtime
+17. Testing
+18. Performance
+19. Security
+20. Git Standards
+21. Code Review Checklist
+
+---
+
+# Philosophy
+
+Code is read far more often than it is written.
+
+Every line should optimize for:
+
+- Readability
+- Simplicity
+- Correctness
+- Maintainability
+
+Avoid clever code.
+
+Prefer boring, predictable code.
 
 ---
 
 # General Principles
 
-Code should be:
+## Single Responsibility Principle
 
-* Readable
-* Predictable
-* Testable
-* Modular
-* Well documented
+Every class should have one purpose.
 
-Optimize for long-term maintainability rather than short-term convenience.
+Good
 
----
+```
+HTTPClient
 
-# Python Version
+ProviderRouter
 
-Target:
+ConversationStore
+```
 
-* Python 3.14+
+Bad
 
-Use modern language features whenever appropriate.
+```
+RuntimeManager
 
-Examples:
+HelperUtils
 
-* `StrEnum`
-* `pathlib.Path`
-* Built-in generic types
-* Pattern matching where it improves readability
-
----
-
-# Formatting
-
-Formatting is handled automatically by Ruff.
-
-Run before every commit:
-
-```bash
-uv run ruff format .
+CommonFunctions
 ```
 
 ---
 
-# Linting
+## Explicit is Better Than Implicit
 
-Run:
+Avoid hidden behavior.
 
-```bash
-uv run ruff check .
-```
-
-Warnings should be resolved instead of ignored whenever practical.
-
----
-
-# Type Hints
-
-Public APIs must include type hints.
-
-Good:
+Good
 
 ```python
-def register(provider: BaseProvider) -> None:
-    ...
+provider.generate(request)
 ```
 
-Avoid omitting annotations for public methods.
+Bad
+
+```python
+provider.run()
+```
 
 ---
 
-# Docstrings
+## Composition Over Inheritance
 
-Every public:
+Prefer
 
-* Class
-* Function
-* Method
-* Module
+```
+Runtime
 
-should include a concise docstring describing its purpose.
+↓
+
+Provider
+
+↓
+
+HTTP Client
+```
+
+instead of deep inheritance hierarchies.
 
 ---
 
-# Comments
+## Dependency Injection
 
-Write comments that explain *why*, not *what*.
+Never create dependencies inside classes.
 
-Good:
+Bad
 
 ```python
-# Cache provider instances to avoid repeated client creation.
+class Runtime:
+
+    def __init__(self):
+        self.client = HTTPClient()
 ```
 
-Avoid:
+Good
 
 ```python
-# Increment counter.
-counter += 1
+class Runtime:
+
+    def __init__(self, client: HTTPClient):
+        self.client = client
+```
+
+---
+
+# Project Structure
+
+Each package should represent one responsibility.
+
+```
+core/
+runtime/
+memory/
+providers/
+tools/
+agents/
+workflows/
+```
+
+Never mix responsibilities.
+
+---
+
+# Python Standards
+
+Python Version
+
+```
+Python 3.14+
+```
+
+Always use:
+
+- type hints
+- dataclasses or Pydantic models where appropriate
+- pathlib instead of os.path
+- context managers
+- f-strings
+
+Avoid
+
+```
+print()
+```
+
+except for CLI output.
+
+---
+
+# Naming Conventions
+
+## Classes
+
+PascalCase
+
+```
+RuntimeEngine
+
+ProviderRouter
+
+ConversationStore
+```
+
+---
+
+## Functions
+
+snake_case
+
+```
+generate_response()
+
+register_provider()
+```
+
+---
+
+## Variables
+
+snake_case
+
+```
+provider_name
+
+conversation_store
+```
+
+---
+
+## Constants
+
+UPPER_CASE
+
+```
+DEFAULT_TIMEOUT
+
+DEFAULT_PROVIDER
+```
+
+---
+
+## Private Members
+
+Prefix with underscore.
+
+```
+_client
+
+_router
+
+_registry
+```
+
+---
+
+# File Organization
+
+Each file should contain one primary concept.
+
+Good
+
+```
+http_client.py
+
+provider_router.py
+
+conversation_store.py
+```
+
+Avoid
+
+```
+utils.py
+
+helpers.py
+
+common.py
 ```
 
 ---
 
 # Imports
 
-Prefer explicit imports.
+Always group imports.
 
-Good:
-
-```python
-from mycode.llm.runtime import RuntimeEngine
-```
-
-Avoid wildcard imports:
+Standard Library
 
 ```python
-from module import *
+from pathlib import Path
+```
+
+Third Party
+
+```python
+import httpx
+import typer
+```
+
+Project
+
+```python
+from mycode.runtime import RuntimeEngine
+```
+
+Never use wildcard imports.
+
+Bad
+
+```python
+from runtime import *
 ```
 
 ---
 
-# Naming Conventions
+# Type Hints
 
-| Item      | Convention |
-| --------- | ---------- |
-| Classes   | PascalCase |
-| Functions | snake_case |
-| Variables | snake_case |
-| Constants | UPPER_CASE |
-| Modules   | snake_case |
-| Packages  | snake_case |
+Every public function must include type hints.
 
-Names should clearly communicate intent.
+Good
 
----
-
-# Project Structure
-
-Each module should have one primary responsibility.
-
-Avoid creating "utility" modules that collect unrelated functionality.
-
----
-
-# Dependency Rules
-
-Dependencies flow in one direction:
-
-```text
-CLI / API / UI
-        ↓
-Application
-        ↓
-Runtime
-        ↓
-Router
-        ↓
-Provider
-        ↓
-Client
+```python
+def generate(
+    request: ChatRequest,
+) -> ChatResponse:
 ```
 
-Lower layers must not depend on higher layers.
+Avoid
+
+```python
+def generate(request):
+```
 
 ---
 
-# Dependency Injection
+# Documentation
 
-Shared services should be provided through the application's dependency injection container.
+Every public class must include a docstring.
 
-Avoid global state.
+Example
+
+```python
+class RuntimeEngine:
+    """Coordinates AI execution."""
+```
+
+Every public function should explain:
+
+- Purpose
+- Parameters
+- Return value
+
+Keep docstrings concise.
 
 ---
 
 # Error Handling
 
-Raise meaningful exceptions.
+Never swallow exceptions.
 
-Never silently ignore errors.
+Bad
 
-Prefer explicit error handling over broad `except Exception` blocks.
+```python
+except:
+    pass
+```
+
+Good
+
+```python
+except HTTPRequestError as exc:
+    logger.error(str(exc))
+    raise
+```
+
+Create domain-specific exceptions.
+
+Example
+
+```
+ProviderError
+
+NetworkError
+
+ConfigurationError
+```
 
 ---
 
 # Logging
 
-Use `LoggerManager`.
+Never use print() for debugging.
 
-Do not instantiate logging libraries directly outside the logging subsystem.
+Use LoggerManager.
+
+Good
+
+```python
+logger.info("Provider initialized.")
+```
+
+Avoid logging secrets.
+
+Never log:
+
+- API keys
+- Tokens
+- Passwords
+
+---
+
+# Async Programming
+
+Network operations must be asynchronous.
+
+Good
+
+```python
+await client.post(...)
+```
+
+Avoid blocking calls.
+
+Bad
+
+```python
+requests.post(...)
+```
+
+Never call
+
+```
+time.sleep()
+```
+
+inside async code.
+
+---
+
+# Dependency Injection
+
+Shared services belong in bootstrap.
+
+Resolve services through Application.
+
+Good
+
+```python
+runtime = application.resolve(RuntimeEngine)
+```
+
+Avoid
+
+```python
+RuntimeEngine()
+```
+
+inside feature code.
 
 ---
 
 # Configuration
 
-Read configuration through `ConfigManager`.
+Application settings belong in
 
-Avoid hard-coded paths, secrets, or provider settings.
+```
+settings.yaml
+```
+
+Secrets belong in
+
+```
+.env
+```
+
+Never commit secrets.
 
 ---
 
 # Providers
 
-Providers must:
+Each provider consists of:
 
-* Implement `BaseProvider`.
-* Remain provider-specific.
-* Never contain framework business logic.
+```
+Provider
 
-Vendor SDK usage belongs in client implementations.
+↓
+
+Provider Client
+```
+
+Provider
+
+- Business logic
+
+Client
+
+- API communication
+
+HTTPClient
+
+- Transport
+
+Never mix responsibilities.
 
 ---
 
 # Runtime
 
-The runtime owns:
+RuntimeEngine is the only public AI execution entry point.
 
-* Conversations
-* Routing
-* Streaming
-* Retry behavior
-* Usage tracking
-* Middleware (future)
+Other modules should never call providers directly.
 
-Providers should focus only on generating model responses.
+Correct
+
+```
+Runtime
+
+↓
+
+Provider
+```
+
+Incorrect
+
+```
+CLI
+
+↓
+
+Provider
+```
 
 ---
 
 # Testing
 
-Core framework components should include automated tests.
+Every feature requires tests.
 
-Recommended areas:
+Required
 
-* Configuration
-* Dependency Injection
-* Runtime
-* Router
-* Registry
-* Providers
-* Tools
+- Unit Tests
+
+Recommended
+
+- Integration Tests
+
+Never require internet access for unit tests.
+
+Mock external APIs.
 
 ---
 
 # Performance
 
-Prefer efficient algorithms and avoid unnecessary object creation.
+Reuse expensive objects.
 
-Profile before optimizing.
+Examples
+
+- AsyncClient
+- Logger
+- Configuration
+
+Avoid unnecessary allocations.
+
+Prefer async operations.
 
 ---
 
 # Security
 
-Never:
+Never commit:
 
-* Execute unvalidated shell commands.
-* Trust external input.
-* Expose secrets in logs.
+- API Keys
+- Tokens
+- Passwords
 
-Security should be considered during feature design, not added afterward.
+Always include
+
+```
+.env
+```
+
+in
+
+```
+.gitignore
+```
+
+Rotate compromised keys immediately.
 
 ---
 
-# Breaking Changes
+# Git Standards
 
-Changes to public APIs should be minimized.
+Commit messages follow Conventional Commits.
 
-If a breaking change is necessary:
+Examples
 
-1. Document it.
-2. Update architecture documentation.
-3. Update examples.
-4. Add migration guidance when appropriate.
+```
+feat(runtime): add conversation memory
+
+fix(cli): improve prompt command
+
+refactor(network): simplify HTTP client
+
+docs(runtime): update architecture
+
+test(router): improve provider tests
+```
 
 ---
 
-# Definition of Done
+# Code Review Checklist
 
-A task is complete when:
+Before merging:
 
-* Code is implemented.
-* Ruff formatting passes.
-* Ruff linting passes.
-* Tests pass.
-* Documentation is updated if needed.
-* The architecture remains consistent.
+- Ruff passes
+- Pytest passes
+- Documentation updated
+- Type hints complete
+- Docstrings present
+- No duplicated logic
+- No dead code
+- No secrets committed
+- No debug prints
+- Architecture respected
 
-Every contribution should leave the project in a better state than it was found.
+---
+
+# Principles to Remember
+
+Always prefer:
+
+Simple over clever.
+
+Explicit over implicit.
+
+Composition over inheritance.
+
+Interfaces over implementations.
+
+Dependency injection over object creation.
+
+Readable over short.
+
+Maintainable over clever.
+
+---
+
+# Final Rule
+
+Every pull request should leave the codebase in a better state than it was before.
+
+Small, continuous improvements are preferred over large rewrites.
